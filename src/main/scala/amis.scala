@@ -91,7 +91,7 @@ abstract class LinuxAMIEnvironment[
       like installing build tools: java-8 and scala from rpm's
   */
   private def preparing: String = s"""
-    |aws s3 cp --region ${ami.region} s3://resources.ohnosequences.com/scala/scala-${scalaVersion}.rpm scala-${scalaVersion}.rpm
+    |curl https://downloads.lightbend.com/scala/${scalaVersion}/scala-${scalaVersion}.rpm --output scala-${scalaVersion}.rpm
     |yum -y remove java-1.7.0-openjdk
     |yum -y install java-1.8.0-openjdk scala-${scalaVersion}.rpm
     |""".stripMargin
@@ -174,7 +174,7 @@ case class LinuxAMICompSyntax[C <: AnyLinuxAMICompatible](val comp: C) {
 
 case class amznAMIEnv[A <: AnyAmazonLinuxAMI](
   amazonAMI: A,
-  scalaVersion: String = "2.12.4",
+  scalaVersion: String = "2.12.8",
   workingDir: File = new File("/media/ephemeral0/"),
   javaHeap: Int = 1, // in G
   javaOptions: Seq[String] = Seq()

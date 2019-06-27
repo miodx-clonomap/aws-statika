@@ -1,6 +1,6 @@
 name         := "aws-statika"
 organization := "com.miodx.common"
-version      := "2.0.0"
+version      := "2.1.0-SNAPSHOT"
 description  := "An EC2-based statika environment"
 
 bucketSuffix := "era7.com"
