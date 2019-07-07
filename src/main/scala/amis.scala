@@ -38,7 +38,7 @@ case object  InstanceStatus {
   case object failure   extends InstanceStatus
 }
 
-/*  Abtract class `AmazonLinuxAMI` provides parts of the user script as it's members, so that
+/*  Abstract class `AmazonLinuxAMI` provides parts of the user script as it's members, so that
     one can extend it and redefine behaviour, of some part, reusing others.
 */
 abstract class LinuxAMIEnvironment[
@@ -55,7 +55,7 @@ abstract class LinuxAMIEnvironment[
 
   val logFile: Option[File]
 
-  def logRedirect: String = logFile.map { file => s"exec &> ${file.getAbsolutePath}" }.getOrElse("")
+  def logRedirect: String = logFile.map { file => s"exec &> ${file.getAbsolutePath} 2>&1" }.getOrElse("")
 
   /*  First of all, `initSetting` part sets up logging.
       Then it sets useful environment variables.
@@ -122,6 +122,7 @@ abstract class LinuxAMIEnvironment[
   /* Just running what we built. */
   private def applying: String = s"""
     |java -d${ami.arch.wordSize} -Xmx${javaHeap}G ${javaOptions.mkString(" ")} -cp .:dist.jar apply
+    |echo "Java exit code $$?"
     |""".stripMargin
 
   private def fixLineEndings(s: String): String = s.replaceAll("\\r\\n", "\n").replaceAll("\\r", "\n")
@@ -136,7 +137,8 @@ abstract class LinuxAMIEnvironment[
       building(comp) +
       tagStep(InstanceStatus.applying) +
       applying +
-      tagStep(InstanceStatus.success)
+      tagStep(InstanceStatus.success) +
+      "sleep 30"
     )
 }
 
